@@ -27,20 +27,7 @@ namespace MyApi
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddCors(options =>
-            {
-                options.AddPolicy("AllowMyOrigins",
-                    builder =>
-                    {
-                        builder
-                            .AllowCredentials()
-                            .WithOrigins(
-                                "https://localhost:4200")
-                            .SetIsOriginAllowedToAllowWildcardSubdomains()
-                            .AllowAnyHeader()
-                            .AllowAnyMethod();
-                    });
-            });
+            services.AddCors();
 
             services.AddControllers();
         }
@@ -57,7 +44,12 @@ namespace MyApi
 
             }
 
-            app.UseCors("AllowMyOrigins");
+            // global cors policy
+            app.UseCors(x => x
+                .AllowAnyMethod()
+                .AllowAnyHeader()
+                .SetIsOriginAllowed(origin => true) // allow any origin
+                .AllowCredentials()); // allow credentials
 
             app.UseHttpsRedirection();
 
